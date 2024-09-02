@@ -276,10 +276,10 @@
     </div>
 
     <extra-notes>
-        <div class="italic">*not affiliated with UF*</div>
+        <br><br><br><div class="italic">*not affiliated with UF*</div>
          <div class="italic">*this is just meant for a fun game- nothing bad at all I promise*</div>
          <div class="italic">It is heavily inspired by the Rice Purity Test (if you couldn't tell)</div><br>
- </extra-notes>
+     </extra-notes>
     
      <div id="result" style="display: none;">
         <h2 style="font-family: 'Times New Roman', Times, serif;">Your Rice Purity Score:</h2>
@@ -331,7 +331,7 @@
 
         function showResult(score) {
             const elementsToRemove = document.querySelectorAll(
-                'questions, .button-group, info-text'
+                'questions, .button-group, info-text, extra-notes'
             );
 
             elementsToRemove.forEach(element => {
