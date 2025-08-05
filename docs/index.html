@@ -427,36 +427,30 @@
         .addEventListener('click', showCheckedItems);
 
       function showCheckedItems() {
-        const checkedList = document.getElementById('checkedList');
-        checkedList.innerHTML = '';          // clear any previous
-
-        // loop over every original <li> in your <questions> list
-        document.querySelectorAll('questions li').forEach(li => {
-          const origCb = li.querySelector('input[type="checkbox"]');
-          if (!origCb.checked) return;
-
-          // build a frozen checkbox + label
-          const newLi = document.createElement('li');
-          newLi.style.marginBottom = '5px';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.checked = true;
-          cb.disabled = true;
-          cb.className = 'checkbox-input';
-
-          // grab the number + text
-          const num = li.querySelector('.question-number').textContent;
-          const txt = li.querySelector('.question-text').textContent;
-
-          // assemble
-          newLi.appendChild(cb);
-          newLi.append(` ${num} ${txt}`);
-          checkedList.appendChild(newLi);
-        });
-
-        // disable the show-checked button so you can’t click twice
-        this.disabled = true;
-      }
+     const list = document.getElementById('checkedList');
+     list.innerHTML = ''; // clear
+   
+     document.querySelectorAll('questions li').forEach(li => {
+       const origCb = li.querySelector('input[type="checkbox"]');
+       const newLi = document.createElement('li');
+       newLi.style.marginBottom = '5px';
+   
+       const cb = document.createElement('input');
+       cb.type = 'checkbox';
+       cb.checked = origCb.checked;  // reflect original state
+       cb.disabled = true;
+       cb.className = 'checkbox-input';
+   
+       const num = li.querySelector('.question-number').textContent;
+       const txt = li.querySelector('.question-text').textContent;
+   
+       newLi.appendChild(cb);
+       newLi.append(` ${num} ${txt}`);
+       list.appendChild(newLi);
+     });
+   
+     this.disabled = true;
+   }
     </script>
 </body>
 </html>
