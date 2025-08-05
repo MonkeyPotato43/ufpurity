@@ -231,7 +231,7 @@
     
         
     <info-text>
-        <div class="italic">8The Purity Test is a cool thing that people take to see how cool they are.</div>
+        <div class="italic">9The Purity Test is a cool thing that people take to see how cool they are.</div>
         <div class="italic">But the original was kinda weird so I made a new one (with gators!)</div>
         <div class="italic">So let's see what your new score is :)</div><br>
         <div class="bold">This is a bucket list. It would be so cool for you to do everything except like the drugs and police shit.</div><br>
@@ -360,13 +360,16 @@
    <div id="result" style="display: none;">
      <h2 style="font-family: 'Times New Roman', Times, serif;">Your UF Purity Score:</h2>
      <p id="score"></p>
-     <button
+     <div class="button-group" style="margin-top: 5px;">
+      <button
         id="showCheckedBtn"
-        style="display: none; margin-top: 0px;"
+        style="display: none;"
         onclick="toggleCheckedList()"
       >
         Show what I checked
       </button>
+    </div>
+
 
      <questions
     id="checkedList"
@@ -436,20 +439,20 @@ function toggleCheckedList() {
 
   if (!isListVisible) {
     list.innerHTML = '';
-    document.querySelectorAll('questions li').forEach(li => {
-      const orig = li.querySelector('input[type="checkbox"]');
-      const num  = li.querySelector('.question-number').textContent;
-      const txt  = li.querySelector('.question-text').textContent;
+    document.querySelectorAll('questions li').forEach(origLi => {
+      const origCb = origLi.querySelector('input[type="checkbox"]');
+      const num    = origLi.querySelector('.question-number').textContent;
+      const txt    = origLi.querySelector('.question-text').textContent;
 
       const newLi = document.createElement('li');
       newLi.innerHTML = `
         <label>
           <span class="question-number">${num}</span>
-          <input 
-            type="checkbox" 
-            class="checkbox-input" 
-            ${orig.checked ? 'checked' : ''} 
+          <input
+            type="checkbox"
+            class="checkbox-input"
             disabled
+            ${origCb.checked ? 'checked' : ''}
           >
           <span class="question-text">${txt}</span>
         </label>
@@ -466,6 +469,7 @@ function toggleCheckedList() {
     isListVisible      = false;
   }
 }
+
 
 </script>
 
