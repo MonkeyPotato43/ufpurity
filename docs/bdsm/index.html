@@ -88,12 +88,17 @@
             
         }
 
-        #score {
-            font-size: 50px;
-            color: red; /* Change the color if needed */
-            font-family: "Times New Roman", Times, serif;
-            margin-top: 0px;
-        }
+          #score {
+            font-size:50px;
+            color:red;
+            margin-top:0;
+            margin-bottom:2px;       /* <-- added */
+          }
+        
+          /* tighten space before the toggle button */
+          #toggleGroup {
+            margin-top:2px !important; /* <-- added */
+          }
         
         .italic {
             font-style: italic;
@@ -148,20 +153,20 @@
 </head>
 
 <body id = #top>
-    <img src="bdsm/logo.png" alt="UF Purity Test Logo"
+    <img src="logo.png" alt="UF Purity Test Logo"
         width = 400;
         height = 57;
         >
     
         
     <info-text>
-        <div class="italic">The BDSM Test is a cool thing that people take to see how cool they are.</div>
+        <div class="italic">12The Purity Test is a cool thing that people take to see how cool they are.</div>
         <div class="italic">But the original was kinda weird so I made a new one (with gators!)</div>
         <div class="italic">So let's see what your new score is :)</div><br>
         <div class="bold">This is a bucket list. It would be so cool for you to do everything except like the drugs and police shit.</div><br>
         <div class="regular">Click on every item you've done.</div><br>
-        <div class="italic">I tried to make it gay friendly for everyone (any combo of people), so</div>
-        <div class="italic">cum is everyones cum and nipple/boob works for everyone.</div><br>
+        <div class="italic">I tried to make it gay friendly for everyone (any combo of people),</div>
+        <div class="italic">so cum is everyones cum and nipple/boob works for everyone.</div><br>
     </info-text>
 
  
@@ -280,11 +285,29 @@
          <div class="italic">*this is just meant for a fun game- nothing bad at all I promise*</div>
          <div class="italic">It is heavily inspired by the Rice Purity Test (if you couldn't tell)</div><br>
      </extra-notes>
-    
-     <div id="result" style="display: none;">
-        <h2 style="font-family: 'Times New Roman', Times, serif;">Your UF Purity Score:</h2>
-        <p id="score"></p>
-    </div>
+       
+<div id="result" style="display: none;">
+  <h2 style="font-family: 'Times New Roman', Times, serif;">Your UF Purity Score:</h2>
+  <p id="score"></p>
+
+  <!-- new wrapper, hidden by default -->
+  <div id="toggleGroup" class="button-group" style="display: none; margin-top: 5px;">
+    <button id="showCheckedBtn" onclick="toggleCheckedList()">
+      Show what I checked
+    </button>
+  </div>
+
+  <questions
+    id="checkedList"
+    style="display: none;
+           font-family: 'Times New Roman', Times, serif;
+           font-size: 13px;
+           font-weight: normal;
+           margin-top: 10px;"
+  >
+  </questions>
+</div>
+
     <div style="margin-top: 70px; text-align: center;">
         <h2> </h2>
         <p> </p>
@@ -300,51 +323,86 @@
     
         
         
-    <script>
-        function clearAll() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        }
+<script>
+  const btn = document.getElementById('showCheckedBtn');
+  const list = document.getElementById('checkedList');
+  const resultDiv = document.getElementById('result');
 
-        function selectAll() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-            });
-        }
+  function clearAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  }
 
-        function calculateScore() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            let checkedCount = 0;
+  function selectAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+  }
 
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    checkedCount++;
-                }
-            });
+  function calculateScore() {
+    const all = document.querySelectorAll('input[type="checkbox"]');
+    let count = [...all].filter(cb => cb.checked).length;
+    showResult(100 - count);
+  }
 
-            const purityScore = 100 - checkedCount;
-            showResult(purityScore);
-        }
+function showResult(score) {
+  // hide original questions, intro, and all button-groups except our toggleGroup
+  document.querySelectorAll(
+    'questions, info-text, extra-notes, .button-group:not(#toggleGroup)'
+  ).forEach(el => el.style.display = 'none');
 
-        function showResult(score) {
-            const elementsToRemove = document.querySelectorAll(
-                'questions, .button-group, info-text, extra-notes'
-            );
+  // show score
+  document.getElementById('score').textContent = score;
+  document.getElementById('result').style.display = 'block';
 
-            elementsToRemove.forEach(element => {
-                element.style.display = 'none';
-            });
-            const resultDiv = document.getElementById('result');
-            const scoreElement = document.getElementById('score');
-            scoreElement.textContent = score;
-            
-          
+  // reveal only our toggle button wrapper
+  document.getElementById('toggleGroup').style.display = 'inline-block';
 
-            resultDiv.style.display = 'block';
-        }
-    </script>
+  // reset toggle state
+  isListVisible = false;
+  document.getElementById('showCheckedBtn').textContent = 'Show what I checked';
+  document.getElementById('checkedList').style.display = 'none';
+}
+
+
+let isListVisible = false;
+
+function toggleCheckedList() {
+  const btn  = document.getElementById('showCheckedBtn');
+  const list = document.getElementById('checkedList');
+
+  if (!isListVisible) {
+    list.innerHTML = '';
+    document.querySelectorAll('questions li').forEach(origLi => {
+      const origCb = origLi.querySelector('input[type="checkbox"]');
+      const num    = origLi.querySelector('.question-number').textContent;
+      const txt    = origLi.querySelector('.question-text').textContent;
+
+      const newLi = document.createElement('li');
+      newLi.innerHTML = `
+        <label>
+          <span class="question-number">${num}</span>
+          <input
+            type="checkbox"
+            class="checkbox-input"
+            disabled
+            ${origCb.checked ? 'checked' : ''}
+          >
+          <span class="question-text">${txt}</span>
+        </label>
+      `;
+      list.appendChild(newLi);
+    });
+
+    list.style.display = 'block';
+    btn.textContent    = 'Hide what I checked';
+    isListVisible      = true;
+  } else {
+    list.style.display = 'none';
+    btn.textContent    = 'Show what I checked';
+    isListVisible      = false;
+  }
+}
+
+
+</script>
+
 </body>
 </html>
