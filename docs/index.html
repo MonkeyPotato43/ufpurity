@@ -1,4 +1,77 @@
-<!DOCTYPE html>
+   <script>
+      function clearAll() {
+        document
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach(cb => cb.checked = false);
+      }
+
+      function selectAll() {
+        document
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach(cb => cb.checked = true);
+      }
+
+      function calculateScore() {
+        const all = document.querySelectorAll('input[type="checkbox"]');
+        let count = 0;
+        all.forEach(cb => { if (cb.checked) count++; });
+        const purityScore = 100 - count;
+        showResult(purityScore);
+      }
+
+      function showResult(score) {
+        // hide the original questions + buttons + intro
+        document.querySelectorAll(
+          'questions, .button-group, info-text, extra-notes'
+        ).forEach(el => el.style.display = 'none');
+
+        // show the score
+        const resultDiv = document.getElementById('result');
+        document.getElementById('score').textContent = score;
+        resultDiv.style.display = 'block';
+
+        // reveal our new “Show what I checked” button
+        const btn = document.getElementById('showCheckedBtn');
+        btn.style.display = 'inline-block';
+      }
+
+      // once the button is in the DOM, wire it up…
+      document
+        .getElementById('showCheckedBtn')
+        .addEventListener('click', showCheckedItems);
+
+      function showCheckedItems() {
+        const checkedList = document.getElementById('checkedList');
+        checkedList.innerHTML = '';          // clear any previous
+
+        // loop over every original <li> in your <questions> list
+        document.querySelectorAll('questions li').forEach(li => {
+          const origCb = li.querySelector('input[type="checkbox"]');
+          if (!origCb.checked) return;
+
+          // build a frozen checkbox + label
+          const newLi = document.createElement('li');
+          newLi.style.marginBottom = '5px';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = true;
+          cb.disabled = true;
+          cb.className = 'checkbox-input';
+
+          // grab the number + text
+          const num = li.querySelector('.question-number').textContent;
+          const txt = li.querySelector('.question-text').textContent;
+
+          // assemble
+          newLi.appendChild(cb);
+          newLi.append(` ${num} ${txt}`);
+          checkedList.appendChild(newLi);
+        });
+
+        // disable the show-checked button so you can’t click twice
+        this.disabled = true;
+      }
+    </script><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -148,7 +221,7 @@
 </head>
 
 <body id = #top>
-    <img src="hello/logo.png" alt="UF Purity Test Logo"
+    <img src="logo.png" alt="UF Purity Test Logo"
         width = 400;
         height = 57;
         >
