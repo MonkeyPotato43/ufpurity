@@ -1,80 +1,80 @@
-   <script>
-      function clearAll() {
-        document
-          .querySelectorAll('input[type="checkbox"]')
-          .forEach(cb => cb.checked = false);
-      }
+<script>
+  // track show/hide state
+  let isListVisible = false;
 
-      function selectAll() {
-        document
-          .querySelectorAll('input[type="checkbox"]')
-          .forEach(cb => cb.checked = true);
-      }
+  // clear / select helpers (called inline from your buttons)
+  function clearAll() {
+    document.querySelectorAll('input[type="checkbox"]')
+            .forEach(cb => cb.checked = false);
+  }
 
-      function calculateScore() {
-        const all = document.querySelectorAll('input[type="checkbox"]');
-        let count = 0;
-        all.forEach(cb => { if (cb.checked) count++; });
-        const purityScore = 100 - count;
-        showResult(purityScore);
-      }
+  function selectAll() {
+    document.querySelectorAll('input[type="checkbox"]')
+            .forEach(cb => cb.checked = true);
+  }
 
-      function showResult(score) {
-        // hide the original questions + buttons + intro
-        document.querySelectorAll(
-          'questions, .button-group, info-text, extra-notes'
-        ).forEach(el => el.style.display = 'none');
+  // compute and show score
+  function calculateScore() {
+    const all = document.querySelectorAll('input[type="checkbox"]');
+    const count = [...all].filter(cb => cb.checked).length;
+    showResult(100 - count);
+  }
 
-        // show the score
-        const resultDiv = document.getElementById('result');
-        document.getElementById('score').textContent = score;
-        resultDiv.style.display = 'block';
+  // hide the quiz and reveal score + toggle button
+  function showResult(score) {
+    document.querySelectorAll(
+      'questions, .button-group, info-text, extra-notes'
+    ).forEach(el => el.style.display = 'none');
 
-        // reveal our new “Show what I checked” button
-        const btn = document.getElementById('showCheckedBtn');
-        btn.style.display = 'inline-block';
-      }
+    document.getElementById('score').textContent = score;
+    document.getElementById('result').style.display = 'block';
 
-      // once the button is in the DOM, wire it up…
-      document
-        // wire up once
-const btn = document.getElementById('showCheckedBtn');
-const list = document.getElementById('checkedList');
+    const btn = document.getElementById('showCheckedBtn');
+    btn.style.display   = 'inline-block';
+    btn.textContent     = 'Show what I checked';
+    isListVisible       = false;
+    document.getElementById('checkedList').style.display = 'none';
+  }
 
-btn.addEventListener('click', () => {
-  if (list.style.display === 'block') {
-    // currently visible → hide it
-    list.style.display = 'none';
-    btn.textContent = 'Show what I checked';
-  } else {
-    // currently hidden → rebuild & show
-    list.innerHTML = '';
-    document.querySelectorAll('questions li')
-      .forEach(li => {
+  // inline onclick handler for your toggle button
+  function toggleCheckedList() {
+    const btn  = document.getElementById('showCheckedBtn');
+    const list = document.getElementById('checkedList');
+
+    if (!isListVisible) {
+      // build entire list (all Qs, checked state)
+      list.innerHTML = '';
+      document.querySelectorAll('questions li').forEach(li => {
         const orig = li.querySelector('input[type="checkbox"]');
         const newLi = document.createElement('li');
         newLi.style.marginBottom = '5px';
 
         const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.checked = orig.checked;
+        cb.type     = 'checkbox';
+        cb.checked  = orig.checked;
         cb.disabled = true;
-        cb.className = 'checkbox-input';
+        newLi.appendChild(cb);
 
         const num = li.querySelector('.question-number').textContent;
         const txt = li.querySelector('.question-text').textContent;
-
-        newLi.appendChild(cb);
         newLi.append(` ${num} ${txt}`);
+
         list.appendChild(newLi);
       });
 
-    list.style.display = 'block';
-    btn.textContent = 'Hide what I checked';
+      list.style.display = 'block';
+      btn.textContent    = 'Hide what I checked';
+      isListVisible      = true;
+    } else {
+      // hide it
+      list.style.display = 'none';
+      btn.textContent    = 'Show what I checked';
+      isListVisible      = false;
+    }
   }
-});
+</script>
 
-    </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -231,7 +231,7 @@ btn.addEventListener('click', () => {
     
         
     <info-text>
-        <div class="italic">4The Purity Test is a cool thing that people take to see how cool they are.</div>
+        <div class="italic">5The Purity Test is a cool thing that people take to see how cool they are.</div>
         <div class="italic">But the original was kinda weird so I made a new one (with gators!)</div>
         <div class="italic">So let's see what your new score is :)</div><br>
         <div class="bold">This is a bucket list. It would be so cool for you to do everything except like the drugs and police shit.</div><br>
