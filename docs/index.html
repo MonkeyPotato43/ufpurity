@@ -231,7 +231,7 @@ btn.addEventListener('click', () => {
     
         
     <info-text>
-        <div class="italic">2The Purity Test is a cool thing that people take to see how cool they are.</div>
+        <div class="italic">3The Purity Test is a cool thing that people take to see how cool they are.</div>
         <div class="italic">But the original was kinda weird so I made a new one (with gators!)</div>
         <div class="italic">So let's see what your new score is :)</div><br>
         <div class="bold">This is a bucket list. It would be so cool for you to do everything except like the drugs and police shit.</div><br>
@@ -356,24 +356,22 @@ btn.addEventListener('click', () => {
          <div class="italic">*this is just meant for a fun game- nothing bad at all I promise*</div>
          <div class="italic">It is heavily inspired by the Rice Purity Test (if you couldn't tell)</div><br>
      </extra-notes>
-    
-    <div id="result" style="display: none;">
-      <h2 style="font-family: 'Times New Roman', Times, serif;">Your UF Purity Score:</h2>
-      <p id="score"></p>
-      <!-- new button, initially hidden -->
-      <button id="showCheckedBtn" style="display: none; margin-top: 10px;">
-        Show what I checked
-      </button>
-      <!-- container for the frozen-in-time checked list -->
-      <ul id="checkedList"
+       
+   <div id="result" style="display: none;">
+     <h2 style="font-family: 'Times New Roman', Times, serif;">Your UF Purity Score:</h2>
+     <p id="score"></p>
+     <button id="showCheckedBtn" style="display: none; margin-top: 10px;">
+       Show what I checked
+     </button>
+     <ul id="checkedList"
          style="display: none;
-           list-style-type: none;
-           text-align: left;
-           padding-left: 30px;
-           margin-top: 20px;">
-      </ul>
+                list-style-type: none;
+                text-align: left;
+                padding-left: 30px;
+                margin-top: 20px;">
+     </ul>
+   </div>
 
-    </div>
     <div style="margin-top: 70px; text-align: center;">
         <h2> </h2>
         <p> </p>
@@ -389,73 +387,73 @@ btn.addEventListener('click', () => {
     
         
         
-   <script>
-      function clearAll() {
-        document
-          .querySelectorAll('input[type="checkbox"]')
-          .forEach(cb => cb.checked = false);
-      }
+<script>
+  const btn = document.getElementById('showCheckedBtn');
+  const list = document.getElementById('checkedList');
+  const resultDiv = document.getElementById('result');
 
-      function selectAll() {
-        document
-          .querySelectorAll('input[type="checkbox"]')
-          .forEach(cb => cb.checked = true);
-      }
+  function clearAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  }
 
-      function calculateScore() {
-        const all = document.querySelectorAll('input[type="checkbox"]');
-        let count = 0;
-        all.forEach(cb => { if (cb.checked) count++; });
-        const purityScore = 100 - count;
-        showResult(purityScore);
-      }
+  function selectAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+  }
 
-      function showResult(score) {
-        // hide the original questions + buttons + intro
-        document.querySelectorAll(
-          'questions, .button-group, info-text, extra-notes'
-        ).forEach(el => el.style.display = 'none');
+  function calculateScore() {
+    const all = document.querySelectorAll('input[type="checkbox"]');
+    let count = [...all].filter(cb => cb.checked).length;
+    showResult(100 - count);
+  }
 
-        // show the score
-        const resultDiv = document.getElementById('result');
-        document.getElementById('score').textContent = score;
-        resultDiv.style.display = 'block';
+  function showResult(score) {
+    // hide the original questions + buttons + intro
+    document.querySelectorAll('questions, .button-group, info-text, extra-notes')
+            .forEach(el => el.style.display = 'none');
 
-        // reveal our new “Show what I checked” button
-        const btn = document.getElementById('showCheckedBtn');
-        btn.style.display = 'inline-block';
-      }
+    // show score + reset toggle state
+    document.getElementById('score').textContent = score;
+    resultDiv.style.display = 'block';
+    btn.style.display    = 'inline-block';
+    btn.textContent      = 'Show what I checked';
+    btn.dataset.shown    = 'false';
+  }
 
-      // once the button is in the DOM, wire it up…
-      document
-        .getElementById('showCheckedBtn')
-        .addEventListener('click', showCheckedItems);
+  // wire the toggle
+  btn.addEventListener('click', () => {
+    const isShown = btn.dataset.shown === 'true';
 
-      function showCheckedItems() {
-     const list = document.getElementById('checkedList');
-     list.innerHTML = ''; // clear
-   
-     document.querySelectorAll('questions li').forEach(li => {
-       const origCb = li.querySelector('input[type="checkbox"]');
-       const newLi = document.createElement('li');
-       newLi.style.marginBottom = '5px';
-   
-       const cb = document.createElement('input');
-       cb.type = 'checkbox';
-       cb.checked = origCb.checked;  // reflect original state
-       cb.disabled = true;
-       cb.className = 'checkbox-input';
-   
-       const num = li.querySelector('.question-number').textContent;
-       const txt = li.querySelector('.question-text').textContent;
-   
-       newLi.appendChild(cb);
-       newLi.append(` ${num} ${txt}`);
-       list.appendChild(newLi);
-     });
-   
-     this.disabled = true;
-   }
-    </script>
+    if (isShown) {
+      list.style.display   = 'none';
+      btn.textContent      = 'Show what I checked';
+      btn.dataset.shown    = 'false';
+    } else {
+      // rebuild full list
+      list.innerHTML = '';
+      document.querySelectorAll('questions li').forEach(li => {
+        const orig = li.querySelector('input[type="checkbox"]');
+        const newLi = document.createElement('li');
+        newLi.style.marginBottom = '5px';
+
+        const cb = document.createElement('input');
+        cb.type     = 'checkbox';
+        cb.checked  = orig.checked;
+        cb.disabled = true;
+        newLi.appendChild(cb);
+
+        const num = li.querySelector('.question-number').textContent;
+        const txt = li.querySelector('.question-text').textContent;
+        newLi.append(` ${num} ${txt}`);
+
+        list.appendChild(newLi);
+      });
+
+      list.style.display   = 'block';
+      btn.textContent      = 'Hide what I checked';
+      btn.dataset.shown    = 'true';
+    }
+  });
+</script>
+
 </body>
 </html>
