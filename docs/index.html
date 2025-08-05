@@ -231,7 +231,7 @@
     
         
     <info-text>
-        <div class="italic">6The Purity Test is a cool thing that people take to see how cool they are.</div>
+        <div class="italic">7The Purity Test is a cool thing that people take to see how cool they are.</div>
         <div class="italic">But the original was kinda weird so I made a new one (with gators!)</div>
         <div class="italic">So let's see what your new score is :)</div><br>
         <div class="bold">This is a bucket list. It would be so cool for you to do everything except like the drugs and police shit.</div><br>
@@ -368,13 +368,8 @@
         Show what I checked
       </button>
 
-     <ul id="checkedList"
-         style="display: none;
-                list-style-type: none;
-                text-align: left;
-                padding-left: 30px;
-                margin-top: 20px;">
-     </ul>
+     <questions id="checkedList" style="display: none;">
+     </questions>
    </div>
 
     <div style="margin-top: 70px; text-align: center;">
@@ -430,34 +425,35 @@ function toggleCheckedList() {
   const list = document.getElementById('checkedList');
 
   if (!isListVisible) {
-    // rebuild & show
     list.innerHTML = '';
     document.querySelectorAll('questions li').forEach(li => {
       const orig = li.querySelector('input[type="checkbox"]');
+      const num  = li.querySelector('.question-number').textContent;
+      const txt  = li.querySelector('.question-text').textContent;
+
       const newLi = document.createElement('li');
-      newLi.style.marginBottom = '5px';
-
-      const cb = document.createElement('input');
-      cb.type     = 'checkbox';
-      cb.checked  = orig.checked;
-      cb.disabled = true;
-      newLi.appendChild(cb);
-
-      const num = li.querySelector('.question-number').textContent;
-      const txt = li.querySelector('.question-text').textContent;
-      newLi.append(` ${num} ${txt}`);
-
+      newLi.innerHTML = `
+        <label>
+          <span class="question-number">${num}</span>
+          <input 
+            type="checkbox" 
+            class="checkbox-input" 
+            ${orig.checked ? 'checked' : ''} 
+            disabled
+          >
+          <span class="question-text">${txt}</span>
+        </label>
+      `;
       list.appendChild(newLi);
     });
 
-    list.style.display   = 'block';
-    btn.textContent      = 'Hide what I checked';
-    isListVisible        = true;
+    list.style.display = 'block';
+    btn.textContent    = 'Hide what I checked';
+    isListVisible      = true;
   } else {
-    // hide
-    list.style.display   = 'none';
-    btn.textContent      = 'Show what I checked';
-    isListVisible        = false;
+    list.style.display = 'none';
+    btn.textContent    = 'Show what I checked';
+    isListVisible      = false;
   }
 }
 
