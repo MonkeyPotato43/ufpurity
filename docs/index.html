@@ -37,40 +37,43 @@
 
       // once the button is in the DOM, wire it up…
       document
-        .getElementById('showCheckedBtn')
-        .addEventListener('click', showCheckedItems);
+        // wire up once
+const btn = document.getElementById('showCheckedBtn');
+const list = document.getElementById('checkedList');
 
-      function showCheckedItems() {
-        const checkedList = document.getElementById('checkedList');
-        checkedList.innerHTML = '';          // clear any previous
+btn.addEventListener('click', () => {
+  if (list.style.display === 'block') {
+    // currently visible → hide it
+    list.style.display = 'none';
+    btn.textContent = 'Show what I checked';
+  } else {
+    // currently hidden → rebuild & show
+    list.innerHTML = '';
+    document.querySelectorAll('questions li')
+      .forEach(li => {
+        const orig = li.querySelector('input[type="checkbox"]');
+        const newLi = document.createElement('li');
+        newLi.style.marginBottom = '5px';
 
-        // loop over every original <li> in your <questions> list
-        document.querySelectorAll('questions li').forEach(li => {
-          const origCb = li.querySelector('input[type="checkbox"]');
-          if (!origCb.checked) return;
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = orig.checked;
+        cb.disabled = true;
+        cb.className = 'checkbox-input';
 
-          // build a frozen checkbox + label
-          const newLi = document.createElement('li');
-          newLi.style.marginBottom = '5px';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.checked = true;
-          cb.disabled = true;
-          cb.className = 'checkbox-input';
+        const num = li.querySelector('.question-number').textContent;
+        const txt = li.querySelector('.question-text').textContent;
 
-          // grab the number + text
-          const num = li.querySelector('.question-number').textContent;
-          const txt = li.querySelector('.question-text').textContent;
+        newLi.appendChild(cb);
+        newLi.append(` ${num} ${txt}`);
+        list.appendChild(newLi);
+      });
 
-          // assemble
-          newLi.appendChild(cb);
-          newLi.append(` ${num} ${txt}`);
-          checkedList.appendChild(newLi);
-        });
+    list.style.display = 'block';
+    btn.textContent = 'Hide what I checked';
+  }
+});
 
-        // disable the show-checked button so you can’t click twice
-        this.disabled = true;
-      }
     </script><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -228,7 +231,7 @@
     
         
     <info-text>
-        <div class="italic">1The Purity Test is a cool thing that people take to see how cool they are.</div>
+        <div class="italic">2The Purity Test is a cool thing that people take to see how cool they are.</div>
         <div class="italic">But the original was kinda weird so I made a new one (with gators!)</div>
         <div class="italic">So let's see what your new score is :)</div><br>
         <div class="bold">This is a bucket list. It would be so cool for you to do everything except like the drugs and police shit.</div><br>
@@ -363,11 +366,13 @@
       </button>
       <!-- container for the frozen-in-time checked list -->
       <ul id="checkedList"
-          style="list-style-type: none;
-                 text-align: left;
-                 padding-left: 30px;
-                 margin-top: 20px;">
+         style="display: none;
+           list-style-type: none;
+           text-align: left;
+           padding-left: 30px;
+           margin-top: 20px;">
       </ul>
+
     </div>
     <div style="margin-top: 70px; text-align: center;">
         <h2> </h2>
